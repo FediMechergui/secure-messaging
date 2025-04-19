@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Secure Chat</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body, html {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #0d0d1a;
+      overflow: hidden;
+    }
+    #particles-js {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+    .chat-container {
+      width: 90vw;
+      max-width: 1100px;
+      height: 80vh;
+      background: rgba(20, 20, 40, 0.93);
+      margin: 40px auto;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+      display: flex;
+      overflow: hidden;
+      position: relative;
+      z-index: 1;
+    }
+    .users-list {
+      width: 260px;
+      background: rgba(30, 30, 60, 0.95);
+      border-right: 1px solid #232345;
+      padding: 0;
+      list-style: none;
+      overflow-y: auto;
+      color: #fff;
+    }
+    .users-list li {
+      padding: 20px 24px;
+      border-bottom: 1px solid #232345;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .users-list li.active, .users-list li:hover {
+      background: #232345;
+    }
+    .chat-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+    .chat-header {
+      padding: 20px;
+      background: rgba(30, 30, 60, 0.97);
+      color: #fff;
+      border-bottom: 1px solid #232345;
+      font-size: 1.2em;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .chat-messages {
+      flex: 1;
+      padding: 24px 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .message {
+      max-width: 60%;
+      padding: 16px 20px;
+      border-radius: 14px;
+      background: #1d1d36;
+      color: #fff;
+      align-self: flex-start;
+      position: relative;
+      word-break: break-word;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      font-size: 1.05em;
+      line-height: 1.6;
+    }
+    .message.own {
+      background: linear-gradient(90deg, #3f51b5 70%, #6576ff 100%);
+      align-self: flex-end;
+    }
+    .message .timestamp {
+      font-size: 0.85em;
+      color: #aaa;
+      margin-top: 8px;
+      display: block;
+      text-align: right;
+    }
+    .chat-input {
+      display: flex;
+      padding: 18px 20px;
+      background: rgba(30, 30, 60, 0.97);
+      border-top: 1px solid #232345;
+      gap: 12px;
+      align-items: center;
+    }
+    .chat-input textarea {
+      flex: 1;
+      resize: none;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-size: 1.05em;
+      background: #232345;
+      color: #fff;
+      outline: none;
+      min-height: 40px;
+      max-height: 100px;
+    }
+    .chat-input button {
+      background: linear-gradient(90deg, #3f51b5 70%, #6576ff 100%);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 28px;
+      font-size: 1em;
+      cursor: pointer;
+      font-weight: 600;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      transition: background 0.2s;
+    }
+    .chat-input button:hover {
+      background: linear-gradient(90deg, #6576ff 70%, #3f51b5 100%);
+    }
+    @media (max-width: 700px) {
+      .chat-container {
+        flex-direction: column;
+        height: 100vh;
+        width: 100vw;
+        border-radius: 0;
+      }
+      .users-list {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="particles-js"></div>
+  <div class="chat-container">
+    <ul class="users-list" id="usersList"></ul>
+    <div class="chat-main">
+      <div class="chat-header" id="chatHeader">
+  <span id="chatTitle">Select a user to start chatting</span>
+</div>
+<button id="logoutBtn" title="Logout" style="position:fixed;top:24px;right:36px;z-index:10;background:linear-gradient(90deg,#ff4b91,#ff6c6c);color:#fff;border:none;border-radius:8px;padding:10px 24px;font-size:1em;cursor:pointer;font-weight:600;box-shadow:0 2px 8px rgba(0,0,0,0.1);transition:background 0.2s;">Logout <i class="fas fa-sign-out-alt"></i></button>
+      <div class="chat-messages" id="chatMessages"></div>
+      <form class="chat-input" id="chatForm" style="gap:8px;">
+        <select id="encryptionMethod" style="border-radius:8px;padding:8px 12px;font-size:1em;background:#232345;color:#fff;border:none;">
+          <option value="aes">AES</option>
+        </select>
+        <textarea id="messageInput" placeholder="Type your message..." required></textarea>
+        <button type="submit"><i class="fas fa-paper-plane"></i> Send</button>
+      </form>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+  <script src="https://cdn.socket.io/4.5.0/socket.io.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+  <script>
+    // --- Config ---
+    const API_BASE = 'https://localhost:5000/api';
+    let token = localStorage.getItem('token');
+    let currentUser = JSON.parse(localStorage.getItem('user') || 'null');
+    let selectedUser = null;
+    let socket = null;
+    let users = [];
+    let publicKey = null;
+
+    // --- Authentication check ---
+    if (!token || !currentUser) {
+      window.location.href = 'login.html';
+    }
+    // --- Logout ---
+    document.addEventListener('DOMContentLoaded', function() {
+      const logoutBtn = document.getElementById('logoutBtn');
+      if (logoutBtn) {
+        logoutBtn.onclick = function() {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          window.location.href = 'login.html';
+        };
+      }
+    });
+
+    // --- Fetch users ---
+    async function fetchUsers() {
+      const res = await fetch(`${API_BASE}/users`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (!res.ok) return;
+      users = await res.json();
+      renderUsers();
+    }
+
+    // --- Render users ---
+    function renderUsers() {
+      const ul = document.getElementById('usersList');
+      ul.innerHTML = '';
+      users.forEach(user => {
+        const li = document.createElement('li');
+        // Generate a random avatar color and emoji (deterministic per user)
+        const color = stringToColor(user.username);
+        const emojis = ['😀','🦊','🐱','🐶','🐸','🐵','🐼','🦁','🐯','🐨','🐻','🐮','🦄','🐷','🐔','🐧','🐦','🐤','🐙','🦋'];
+        const emoji = emojis[(user.id || user.username.charCodeAt(0)) % emojis.length];
+        const avatar = document.createElement('span');
+        avatar.textContent = emoji;
+        avatar.style = `display:inline-block;width:32px;height:32px;border-radius:50%;background:${color};color:#fff;font-size:1.3em;line-height:32px;text-align:center;margin-right:12px;vertical-align:middle;`;
+        li.appendChild(avatar);
+        const nameSpan = document.createElement('span');
+        nameSpan.textContent = user.username;
+        li.appendChild(nameSpan);
+        li.onclick = () => selectUser(user);
+        if (selectedUser && selectedUser.id === user.id) li.classList.add('active');
+        ul.appendChild(li);
+      });
+      // Helper to generate a color from a string
+      function stringToColor(str) {
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
+        let color = '#';
+        for (let i = 0; i < 3; i++) color += ('00' + ((hash >> (i * 8)) & 0xFF).toString(16)).slice(-2);
+        return color;
+      }
+    }
+
+    // --- Select user ---
+    async function selectUser(user) {
+      selectedUser = user;
+      document.getElementById('chatHeader').textContent = `Chatting with ${user.username}`;
+      renderUsers();
+      await fetchMessages();
+      setupSocket();
+    }
+
+    // --- Fetch messages ---
+    async function fetchMessages() {
+      const res = await fetch(`${API_BASE}/messages/${selectedUser.id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (!res.ok) return;
+      const messages = await res.json();
+      renderMessages(messages);
+    }
+
+    // --- Render messages ---
+    function decryptAES(ciphertext, keyBase64, ivBase64) {
+  try {
+    const key = CryptoJS.enc.Base64.parse(keyBase64);
+    const iv = CryptoJS.enc.Base64.parse(ivBase64);
+    const decrypted = CryptoJS.AES.decrypt(
+      { ciphertext: CryptoJS.enc.Base64.parse(ciphertext) },
+      key,
+      { iv: iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 }
+    );
+    return decrypted.toString(CryptoJS.enc.Utf8);
+  } catch (e) {
+    return '[decryption unavailable]';
+  }
+}
+
+function renderMessages(messages) {
+  const chat = document.getElementById('chatMessages');
+  chat.innerHTML = '';
+  messages.forEach(msg => {
+    const div = document.createElement('div');
+    div.classList.add('message');
+    if (msg.sender_id === currentUser.id) div.classList.add('own');
+    // Toggle between encrypted and decrypted
+    let showDecrypted = false;
+    const toggleBtn = document.createElement('button');
+    toggleBtn.textContent = 'Show Decrypted';
+    toggleBtn.style = 'margin-left:10px;background:#232345;color:#fff;border:none;border-radius:6px;padding:3px 10px;cursor:pointer;font-size:0.9em;';
+    toggleBtn.onclick = function(e) {
+      e.stopPropagation();
+      showDecrypted = !showDecrypted;
+      renderContent();
+    };
+    function renderContent() {
+      if (showDecrypted) {
+        let decrypted = '[decryption unavailable]';
+        if (msg.algorithm === 'aes' && msg.publicKey && msg.iv && msg.ciphertext) {
+          decrypted = decryptAES(msg.ciphertext, msg.publicKey, msg.iv) || '[decryption unavailable]';
+        }
+        div.innerHTML = `<b>Decrypted:</b> <span style='color:#00c6ff;'>${decrypted}</span><br><span style='font-size:0.92em;color:#ffb84b;'><b>Algorithm:</b> ${msg.algorithm || ''}</span><br><span style='font-size:0.92em;color:#b4ff4b;'><b>Key:</b> ${msg.publicKey || ''}</span><span class="timestamp">${new Date(msg.created_at).toLocaleString()}</span>`;
+        toggleBtn.textContent = 'Show Encrypted';
+      } else {
+        div.innerHTML = `<b>Encrypted:</b> <span style='color:#ff4b91;'>${msg.ciphertext}</span><br><span style='font-size:0.92em;color:#ffb84b;'><b>Algorithm:</b> ${msg.algorithm || ''}</span><br><span style='font-size:0.92em;color:#b4ff4b;'><b>Key:</b> ${msg.publicKey || ''}</span><span class="timestamp">${new Date(msg.created_at).toLocaleString()}</span>`;
+        toggleBtn.textContent = 'Show Decrypted';
+      }
+      div.appendChild(toggleBtn);
+    }
+    renderContent();
+    chat.appendChild(div);
+  });
+  chat.scrollTop = chat.scrollHeight;
+}
+
+    // --- Setup socket ---
+    function setupSocket() {
+      if (socket) socket.disconnect();
+      socket = io('https://localhost:5000', {
+        auth: { token },
+        transports: ['websocket']
+      });
+      socket.on('connect', () => {
+        // Ready to receive messages
+      });
+      socket.on('message', (data) => {
+        // Only display if from/to selected user
+        if (
+          (data.to == currentUser.id && data.from == selectedUser.id) ||
+          (data.to == selectedUser.id && data.from == currentUser.id)
+        ) {
+          fetchMessages();
+        }
+      });
+    }
+
+    // --- Send message ---
+    document.getElementById('chatForm').onsubmit = async function(e) {
+      e.preventDefault();
+      const text = document.getElementById('messageInput').value.trim();
+      if (!text || !selectedUser) return;
+      // --- Encryption logic placeholder ---
+      // In production, encrypt text and compute HMAC, IV, etc.
+      // For now, send as ciphertext (no real encryption for demo)
+      const payload = {
+        to: selectedUser.id,
+        iv: 'demo-iv',
+        text: text, // Send plaintext for backend encryption
+        hmac: 'demo-hmac',
+        algorithm: 'aes',
+        publicKey: 'demo-public-key' // Replace with real public key
+      };
+      // Send via API
+      await fetch(`${API_BASE}/messages`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      });
+      // Emit via socket
+      if (socket) socket.emit('message', payload);
+      document.getElementById('messageInput').value = '';
+      await fetchMessages();
+    };
+
+    // --- Init ---
+    fetchUsers();
+  </script>
+</body>
+</html>

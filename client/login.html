@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modern Login Page</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body, html {
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      position: relative;
+      background: #0d0d1a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #particles-js {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 1000px;
+      background: rgba(20, 20, 40, 0.9);
+      display: flex;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+      position: relative;
+      z-index: 1;
+    }
+
+    .left {
+      flex: 1;
+      padding: 60px;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .left h1 {
+      font-size: 36px;
+      margin-bottom: 20px;
+    }
+
+    .left p {
+      font-size: 16px;
+      color: #ccc;
+    }
+
+    .right {
+      flex: 1;
+      background-color: #1e1e2f;
+      padding: 60px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .right h2 {
+      color: #fff;
+      font-size: 24px;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 15px;
+      border-radius: 8px;
+      border: none;
+      background-color: #333;
+      color: #fff;
+      font-size: 16px;
+      padding-left: 40px;
+    }
+
+    .form-group i {
+      position: absolute;
+      top: 50%;
+      left: 15px;
+      transform: translateY(-50%);
+      color: #999;
+    }
+
+    .options {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+      color: #aaa;
+    }
+
+    .options a {
+      color: #ff4b91;
+      text-decoration: none;
+    }
+
+    .btn-login {
+      margin-top: 20px;
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 8px;
+      background: linear-gradient(90deg, #ff4b91, #ff6c6c);
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .btn-login:hover {
+      background: linear-gradient(90deg, #ff2b70, #ff4b4b);
+    }
+
+    .social-login {
+      margin-top: 30px;
+      text-align: center;
+    }
+
+    .social-login span {
+      color: #ccc;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .social-icons {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    .social-icons a {
+      color: #ccc;
+      font-size: 20px;
+      transition: 0.3s;
+    }
+
+    .social-icons a:hover {
+      color: #fff;
+    }
+
+    .social-icons a i {
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+      100% { transform: translateY(0); }
+    }
+    .signup-link {
+  margin-top: 20px;
+  text-align: center;
+  color: #aaa;
+  font-size: 14px;
+}
+
+.signup-link a {
+  color: #ff4b91;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.signup-link a:hover {
+  color: #ffffff;
+}
+  </style>
+</head>
+
+<body>
+  <div id="particles-js"></div>
+
+  <div class="container">
+    <div class="left">
+      <h1>Welcome to website</h1>
+      <p>Connectez-vous pour accéder à votre espace sécurisé, gérer vos projets et collaborer en temps réel.</p>
+    </div>
+    <div class="right">
+      <h2>USER LOGIN</h2>
+      <form>
+        <div class="form-group">
+          <i class="fas fa-user"></i>
+          <input type="email" placeholder="Email Address" required>
+        </div>
+        <div class="form-group">
+          <i class="fas fa-lock"></i>
+          <input type="password" placeholder="Password">
+        </div>
+        <div class="options">
+          <label><input type="checkbox"> Remember</label>
+          <a href="#">Forgot password?</a>
+        </div>
+        <button class="btn-login">LOGIN</button>
+      </form>
+      <div class="signup-link">
+        Don't have an account? <a href="register.html">Sign up</a>
+      </div>
+      <div class="social-login">
+        <span>Or login with</span>
+        <div class="social-icons">
+          <a href="https://www.facebook.com/login" target="_blank"><i class="fab fa-facebook-f"></i></a>
+          <a href="https://twitter.com/login" target="_blank"><i class="fab fa-x-twitter"></i></a>
+          <a href="https://www.instagram.com/accounts/login/" target="_blank"><i class="fab fa-instagram"></i></a>
+          <a href="https://accounts.google.com/signin" target="_blank"><i class="fab fa-google"></i></a>
+          <a href="https://www.linkedin.com/login" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+  <script>
+// --- LOGIN LOGIC ---
+document.addEventListener('DOMContentLoaded', function() {
+  const form = document.querySelector('form');
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const email = form.querySelector('input[placeholder="Email Address"]').value.trim();
+    const password = form.querySelector('input[placeholder="Password"]').value;
+    if (!email || !password) return;
+    try {
+      const res = await fetch('https://localhost:5000/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
+      if (res.ok && data.token) {
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        window.location.href = 'chat.html';
+      } else {
+        alert(data.message || 'Login failed');
+      }
+    } catch (err) {
+      alert('Login error');
+    }
+  });
+});
+
+    particlesJS("particles-js", {
+      "particles": {
+        "number": {
+          "value": 80,
+          "density": {
+            "enable": true,
+            "value_area": 800
+          }
+        },
+        "color": { "value": "#ffffff" },
+        "shape": {
+          "type": "circle",
+          "stroke": {
+            "width": 0,
+            "color": "#000000"
+          }
+        },
+        "opacity": {
+          "value": 0.5,
+          "random": false,
+          "anim": {
+            "enable": false
+          }
+        },
+        "size": {
+          "value": 3,
+          "random": true
+        },
+        "line_linked": {
+          "enable": true,
+          "distance": 150,
+          "color": "#ffffff",
+          "opacity": 0.4,
+          "width": 1
+        },
+        "move": {
+          "enable": true,
+          "speed": 6,
+          "direction": "none",
+          "random": false,
+          "straight": false,
+          "out_mode": "out",
+          "bounce": false
+        }
+      },
+      "interactivity": {
+        "events": {
+          "onhover": {
+            "enable": true,
+            "mode": "repulse"
+          },
+          "onclick": {
+            "enable": true,
+            "mode": "push"
+          }
+        },
+        "modes": {
+          "repulse": {
+            "distance": 100,
+            "duration": 0.4
+          },
+          "push": {
+            "particles_nb": 4
+          }
+        }
+      },
+      "retina_detect": true
+    });
+  </script>
+</body>
+
+</html>
