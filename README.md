@@ -110,9 +110,9 @@ CREATE TABLE messages (
    ```bash
    DB_HOST=localhost
    DB_USER=root
-   DB_PASSWORD=yourpassword
+   DB_PASSWORD= 
    DB_NAME=secure_chat
-   JWT_SECRET=your_jwt_secret
+   JWT_SECRET=gqhthbtjrvvt
    ```
 
 ### Running the Application
